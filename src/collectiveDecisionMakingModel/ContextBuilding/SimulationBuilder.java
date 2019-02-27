@@ -8,7 +8,6 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
-import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
@@ -16,12 +15,11 @@ import repast.simphony.space.continuous.WrapAroundBorders;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridBuilderParameters;
 import repast.simphony.space.grid.SimpleGridAdder;
-import repast.simphony.util.SimUtilities;
 
 public class SimulationBuilder implements ContextBuilder<Agent> {
 
 	@Override
-	public Context build(Context<Agent> context) {
+	public Context<Agent> build(Context<Agent> context) {
 		context.setId("CollectiveDecisionMakingModel");
 		
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
