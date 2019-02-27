@@ -1,4 +1,4 @@
-package collectiveDecisionMakingModel;
+package collectiveDecisionMakingModel.EnumTypes;
 
 /**
  * @author Joey De Keyser
