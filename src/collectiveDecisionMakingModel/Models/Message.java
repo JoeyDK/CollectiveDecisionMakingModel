@@ -14,7 +14,7 @@ import collectiveDecisionMakingModel.EnumTypes.Mood;
 public class Message {
 	
 	private int ID;
-	private static AtomicInteger ID_GENERATOR = new AtomicInteger(1000);
+	private static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
 	private Mood mood;
 	private Decision decision;
 	

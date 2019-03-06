@@ -1,4 +1,7 @@
 package collectiveDecisionMakingModel.ContextBuilding;
+import java.util.ArrayList;
+import java.util.List;
+
 import collectiveDecisionMakingModel.EnumTypes.Decision;
 import collectiveDecisionMakingModel.EnumTypes.Mood;
 import collectiveDecisionMakingModel.Models.Agent;
@@ -8,6 +11,7 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
@@ -33,15 +37,19 @@ public class SimulationBuilder implements ContextBuilder<Agent> {
 						new SimpleGridAdder<Agent>(),
 						true, 50, 50));
 		
-		int agentCountA = 100;
+		List<Decision> decisions = new ArrayList<>();
+				
+		int agentCountA = 150;
 		for (int i=0; i<agentCountA; i++) {
-			context.add(new Agent(space, grid, Mood.RATIONAL, Decision.A));
+			decisions.add(Decision.A);
 		}
 		
-		int agentCountB = 95;
+		int agentCountB = 150;
 		for (int i=0; i<agentCountB; i++) {
-			context.add(new Agent(space, grid, Mood.RATIONAL, Decision.B));
+			decisions.add(Decision.B);
 		}
+		
+		shuffle(1, context, space, grid, decisions);
 		
 		for (Agent agent : context) {
 			NdPoint pt = space.getLocation(agent);
@@ -49,6 +57,16 @@ public class SimulationBuilder implements ContextBuilder<Agent> {
 		}
 		
 		return context;
+	}
+	
+	private void shuffle(int iterations, Context<Agent> context, ContinuousSpace<Agent> space, Grid<Agent> grid, List<Decision> decisions) {
+		for(int i=0; i<iterations; i++) {
+			for(int j=decisions.size()-1; j>=0; j--) {
+				Decision d = decisions.get(RandomHelper.nextIntFromTo(0, j));
+				context.add(new Agent(space, grid, Mood.RATIONAL, d));
+				decisions.remove(d);
+			}
+		}
 	}
 	
 }

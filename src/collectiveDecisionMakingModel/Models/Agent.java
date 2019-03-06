@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import bsh.This;
 import collectiveDecisionMakingModel.EnumTypes.AgentState;
 import collectiveDecisionMakingModel.EnumTypes.Decision;
 import collectiveDecisionMakingModel.EnumTypes.Mood;
@@ -26,6 +28,9 @@ public class Agent {
 	
 	static final int MAX_MESSAGES = 5;
 	
+	private int ID;
+	private static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+	
 	private ContinuousSpace<Agent> space;
 	private Grid<Agent> grid;
 	
@@ -45,6 +50,8 @@ public class Agent {
 	private List<Message> receivedMessages;
 	
 	public Agent(ContinuousSpace<Agent> space, Grid<Agent> grid, Mood mood, Decision decision) {
+		
+		this.ID = ID_GENERATOR.getAndIncrement();
 		this.space = space;
 		this.grid = grid;
 		
@@ -52,7 +59,9 @@ public class Agent {
 		this.mood = mood;
 		this.decision = decision;
 		
-		this.transmittingChance = 50;
+		this.message = new Message(this.mood, this.decision);
+		
+		this.transmittingChance = 40;
 		this.moodWeights = new HashMap<>();
 		
 		this.receivedMessages = new ArrayList<>();
@@ -99,7 +108,6 @@ public class Agent {
 	//Update state of the agent (moving or sending)
 	private void updateState() {
 		if(RandomHelper.nextIntFromTo(0, 99)<this.transmittingChance) {
-			this.message = new Message(this.mood, this.decision);
 			this.state = AgentState.TRANSMITTING;
 		}
 		else {
@@ -123,7 +131,7 @@ public class Agent {
 	//Majority Rule => THIS IS IMPORTANT FOR THE THESIS
 	private void processMessages() {
 		//Read all the received messages
-		HashMap<Decision,Double> majorityMap = new HashMap<>();
+		HashMap<Decision, Double> majorityMap = new HashMap<>();
 		for(Message m : this.receivedMessages) {
 			Mood mood = (Mood)m.getMessage().get(0);
 			Decision decision = (Decision)m.getMessage().get(1);
@@ -135,7 +143,10 @@ public class Agent {
 		Decision winner = this.decision;
 		Double winningCount = -1.0;
 		for(Map.Entry<Decision, Double> entry : majorityMap.entrySet()) {
-			if(entry.getValue() > winningCount) winner = entry.getKey();
+			if(entry.getValue() > winningCount) {
+				winningCount = entry.getValue();
+				winner = entry.getKey();
+			}
 		}
 		/*
 		//Update mood weights
@@ -159,6 +170,7 @@ public class Agent {
 		}
 		this.decision = winner;
 		this.receivedMessages.clear();
+		this.message = new Message(this.mood, this.decision);
 	}
 	
 	public Decision getDecision() {
